@@ -6,72 +6,40 @@ How: Saves incoming bytes to a temp .wav file, passes it through the preloaded W
 Errors: Raises ASRTimeoutError after 10 seconds; raises ASRError for any other failure.
 """
 
-import asyncio
 import os
 import tempfile
 import time
-
-import whisper
+import asyncio
+from groq import AsyncGroq
 
 # --- Custom Exceptions ---
 
 class ASRTimeoutError(Exception):
-    """Raised when Whisper transcription exceeds the allowed timeout."""
+    """Raised when Groq transcription exceeds the allowed timeout."""
 
 class ASRError(Exception):
     """Raised for any non-timeout ASR failure."""
 
 
-# --- Module-level model singleton (loaded once at startup) ---
-_whisper_model = None
+# Initialize Groq client
+# This assumes GROQ_API_KEY is available in the environment
+_groq_client = None
 
-
-def load_whisper_model(model_name: str = "base") -> None:
-    """
-    Preload the Whisper model into memory.
-    Called during FastAPI lifespan startup so the first request doesn't pay the load penalty.
-    """
-    global _whisper_model
-    _whisper_model = whisper.load_model(model_name)
-    print(f"✅ Whisper '{model_name}' model loaded.")
-
-
-def _get_model():
-    if _whisper_model is None:
-        raise ASRError("Whisper model not loaded. Call load_whisper_model() at startup.")
-    return _whisper_model
-
-
-# --- Core transcription (blocking, runs in thread pool) ---
-
-def _transcribe_sync(audio_bytes: bytes) -> dict:
-    """
-    Synchronous transcription helper — intended to run in asyncio executor.
-    Writes audio_bytes to a temp WAV file, runs Whisper, cleans up, returns result dict.
-    """
-    model = _get_model()
-    t0 = time.perf_counter()
-
-    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-        tmp.write(audio_bytes)
-        tmp_path = tmp.name
-
-    try:
-        result = model.transcribe(tmp_path, fp16=False)
-        latency_ms = int((time.perf_counter() - t0) * 1000)
-        return {
-            "text": result["text"].strip(),
-            "latency_ms": latency_ms,
-        }
-    finally:
-        os.unlink(tmp_path)
+def _get_groq_client() -> AsyncGroq:
+    global _groq_client
+    if _groq_client is None:
+        api_key = os.getenv("GROQ_API_KEY")
+        if not api_key:
+            raise ASRError("GROQ_API_KEY is not set in the environment.")
+        _groq_client = AsyncGroq(api_key=api_key)
+    return _groq_client
 
 
 # --- Public async API ---
 
 async def transcribe_audio(audio_bytes: bytes) -> dict:
     """
-    Transcribe audio bytes asynchronously with a 10-second hard timeout.
+    Transcribe audio bytes asynchronously using Groq's Whisper API with a 10-second hard timeout.
 
     Returns:
         {"text": "...", "latency_ms": 340}
@@ -80,14 +48,36 @@ async def transcribe_audio(audio_bytes: bytes) -> dict:
         ASRTimeoutError: if transcription takes longer than 10 seconds.
         ASRError: for any other failure.
     """
-    loop = asyncio.get_running_loop()
+    client = _get_groq_client()
+    t0 = time.perf_counter()
+
+    # Groq SDK requires a file-like object with a name attribute ending in a valid extension
+    # So we write the bytes to a temp file, open it, and pass it to the API.
+    with tempfile.NamedTemporaryFile(suffix=".webm", delete=False) as tmp:
+        tmp.write(audio_bytes)
+        tmp_path = tmp.name
+
     try:
-        result = await asyncio.wait_for(
-            asyncio.to_thread(_transcribe_sync, audio_bytes),
-            timeout=10.0,
-        )
-        return result
+        # Wrap the API call in wait_for to enforce the timeout
+        async def _call_groq():
+            with open(tmp_path, "rb") as audio_file:
+                return await client.audio.transcriptions.create(
+                    file=("audio.webm", audio_file.read()),
+                    model="distil-whisper-large-v3-en",
+                    response_format="text",
+                )
+        
+        result_text = await asyncio.wait_for(_call_groq(), timeout=10.0)
+        
+        latency_ms = int((time.perf_counter() - t0) * 1000)
+        return {
+            "text": result_text.strip(),
+            "latency_ms": latency_ms,
+        }
     except asyncio.TimeoutError:
         raise ASRTimeoutError("Speech recognition timed out after 10 seconds.")
     except Exception as exc:
         raise ASRError(f"ASR pipeline failed: {exc}") from exc
+    finally:
+        os.unlink(tmp_path)
+

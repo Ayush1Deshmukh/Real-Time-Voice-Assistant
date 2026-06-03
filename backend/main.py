@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
-from services.asr_service import load_whisper_model
+# Removed load_whisper_model import as we now use Groq API
 from routers import websocket as ws_router
 from routers import auth as auth_router
 
@@ -24,9 +24,7 @@ ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Load heavyweight models before serving requests; clean up after shutdown."""
-    print("⏳ Loading Whisper model at startup...")
-    load_whisper_model()
-    print("✅ Whisper model loaded. Server ready.")
+    print("✅ Server lifespan started. No local models to load.")
     yield
     print("🛑 Server shutting down.")
 
