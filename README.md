@@ -30,11 +30,11 @@
 
 > **Dashboard — Voice Interface**
 
-![Dashboard Screenshot](./Screenshot.png.png)
+![Dashboard Screenshot](./Screenshot1.png.png)
 
 > **Analytics — Live Latency Breakdown per Request**
 
-![Analytics Screenshot](./Screenshot.png.png)
+![Analytics Screenshot](./Screenshot2.png.png)
 
 > 💡 *Add your own screenshots by placing images at `screenshots/dashboard.png` and `screenshots/analytics.png`*
 
