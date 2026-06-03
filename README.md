@@ -1,7 +1,6 @@
 <div align="center">
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=37&pause=1000&color=6366F1&center=true&vCenter=true&width=700&lines=VoxMind+AI;Real-Time+Voice+Intelligence;Speak.+Think.+Respond." alt="VoxMind AI" />
-<div align="center">
 
 <br/>
 
