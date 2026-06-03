@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    @apply bg-surface text-slate-100 font-sans antialiased;
+    background-image:
+      radial-gradient(ellipse 100% 70% at 50% -5%, rgba(61,87,252,0.18) 0%, transparent 65%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(139,92,246,0.08) 0%, transparent 60%);
+    min-height: 100vh;
+  }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { @apply bg-surface; }
+  ::-webkit-scrollbar-thumb { @apply bg-surface-border rounded-full; }
+}
+
+@layer components {
+  /* ── Glass Cards ───────────────────────────────────── */
+  .card {
+    @apply rounded-2xl border border-white/[0.06];
+    background: rgba(22, 27, 39, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .card-solid {
+    @apply bg-surface-card border border-surface-border rounded-2xl;
+  }
+
+  /* ── Buttons ────────────────────────────────────────── */
+  .btn-primary {
+    @apply bg-brand-500 hover:bg-brand-400 text-white font-semibold px-6 py-3 rounded-xl
+           transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed
+           shadow-lg shadow-brand-500/20;
+  }
+
+  .btn-ghost {
+    @apply text-slate-400 hover:text-slate-100 hover:bg-white/5 px-4 py-2 rounded-lg
+           transition-all duration-200;
+  }
+
+  /* ── Inputs ─────────────────────────────────────────── */
+  .input-field {
+    @apply w-full rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500
+           focus:outline-none transition-all duration-200;
+    background: rgba(29, 35, 51, 0.8);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .input-field:focus {
+    border-color: rgba(61,87,252,0.6);
+    box-shadow: 0 0 0 3px rgba(61,87,252,0.12);
+  }
+
+  /* ── Skeleton ───────────────────────────────────────── */
+  .skeleton {
+    @apply rounded-lg;
+    background: linear-gradient(90deg, #1d2333 25%, #252d3d 50%, #1d2333 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+
+  /* ── Status pill ────────────────────────────────────── */
+  .status-pill {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  /* ── Neon glow helpers ──────────────────────────────── */
+  .glow-brand {
+    box-shadow: 0 0 24px rgba(61,87,252,0.45), 0 0 48px rgba(61,87,252,0.15);
+  }
+  .glow-brand-sm {
+    box-shadow: 0 0 12px rgba(61,87,252,0.3);
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .text-gradient-brand {
+    background: linear-gradient(135deg, #6180ff 0%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* ── Keyframes ──────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes ping-slow {
+  0%, 100% { transform: scale(1);   opacity: 0.8; }
+  50%       { transform: scale(1.4); opacity: 0.2; }
+}
+
+.animate-ping-slow {
+  animation: ping-slow 2s ease-in-out infinite;
+}
+
+/* Ring visualizer pulses */
+@keyframes ring-idle {
+  0%, 100% { transform: scale(1);    opacity: 0.35; }
+  50%       { transform: scale(1.07); opacity: 0.5;  }
+}
+
+.ring-idle { animation: ring-idle 2.4s ease-in-out infinite; }
