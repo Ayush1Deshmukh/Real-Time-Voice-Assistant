@@ -9,6 +9,14 @@
 <img src="https://img.shields.io/badge/deployed-live-22c55e?style=for-the-badge&logo=vercel&logoColor=white" />
 <img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" />
 
+<div align="center">
+
+<a href="https://real-time-voice-assistant-one.vercel.app/login">
+  <img src="https://img.shields.io/badge/🚀%20LAUNCH%20LIVE%20DEMO-VoxMind%20AI-success?style=for-the-badge&logo=vercel&logoColor=red" height="110"/>
+</a>
+
+</div>
+
 <br/><br/>
 
 <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black" />
@@ -34,8 +42,6 @@
 > **Analytics — Live Latency Breakdown per Request**
 
 ![Analytics Screenshot](./Screenshot2.png.png)
-
-> 💡 *Add your own screenshots by placing images at `screenshots/dashboard.png` and `screenshots/analytics.png`*
 
 ---
 
