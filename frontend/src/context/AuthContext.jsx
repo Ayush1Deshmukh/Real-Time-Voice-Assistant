@@ -1,11 +1,12 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { auth } from '../lib/firebase'
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth'
 
 /**
- * AuthContext — wraps the entire app with Supabase session state.
+ * AuthContext — wraps the entire app with Firebase session state.
  *
  * Exposes:
- *   user       — current Supabase User object (null if logged out)
+ *   user       — current Firebase User object (null if logged out)
  *   loading    — true while the initial session is being resolved
  *   signIn(email, password) → { error }
  *   signUp(email, password) → { error }
@@ -18,36 +19,46 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Resolve any existing session on mount
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
+    // Listen for auth state changes (resolves initial session and handles login/logout)
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser)
+      setLoading(false)
+    }, (error) => {
+      console.error("Firebase auth error:", error)
       setLoading(false)
     })
 
-    // Listen for future auth state changes (login, logout, token refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-    })
-
-    return () => subscription.unsubscribe()
+    return () => unsubscribe()
   }, [])
 
   const signIn = async (email, password) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    return { error }
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+      return { error: null }
+    } catch (error) {
+      return { error }
+    }
   }
 
   const signUp = async (email, password) => {
-    const { error } = await supabase.auth.signUp({ email, password })
-    return { error }
+    try {
+      await createUserWithEmailAndPassword(auth, email, password)
+      return { error: null }
+    } catch (error) {
+      return { error }
+    }
   }
 
-  const signOut = async () => {
-    await supabase.auth.signOut()
+  const signOutUser = async () => {
+    try {
+      await signOut(auth)
+    } catch (error) {
+      console.error("Firebase signout error:", error)
+    }
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut: signOutUser }}>
       {children}
     </AuthContext.Provider>
   )

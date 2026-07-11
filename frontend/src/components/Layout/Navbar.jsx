@@ -72,7 +72,7 @@ export default function Navbar() {
             className="flex items-center gap-2 cursor-pointer"
           >
             <span className="text-xl">🎙️</span>
-            <span className="font-bold text-slate-100 tracking-tight text-gradient-brand">VoiceAI</span>
+            <span className="font-extrabold text-xl tracking-tight text-gradient-purple">VoiceAI</span>
           </motion.div>
         </Link>
 

@@ -8,10 +8,10 @@ export default {
     extend: {
       colors: {
         brand: {
-          300: '#8b9dff',
-          400: '#758cff',
-          500: '#3d57fc', // Primary Neon Blue
-          600: '#2c3ef1',
+          300: '#a5b4fc', // indigo-300
+          400: '#818cf8', // indigo-400
+          500: '#6366f1', // Primary Indigo-500
+          600: '#4f46e5', // indigo-600
         },
         surface: {
           DEFAULT: '#0f1117',
@@ -21,7 +21,7 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        mono: ['ui-monospace', 'monospace'],
       }
     },
   },

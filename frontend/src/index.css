@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,41 +9,59 @@
   html { scroll-behavior: smooth; }
 
   body {
-    @apply bg-surface text-slate-100 font-sans antialiased;
-    background-image:
-      radial-gradient(ellipse 100% 70% at 50% -5%, rgba(61,87,252,0.18) 0%, transparent 65%),
-      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(139,92,246,0.08) 0%, transparent 60%);
+    @apply text-slate-100 font-sans antialiased selection:bg-brand-500/30;
+    font-family: 'Inter', sans-serif;
+    background-color: #030712;
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.12), transparent 30%),
+      radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.12), transparent 30%),
+      radial-gradient(circle at 50% 100%, rgba(56, 189, 248, 0.08), transparent 40%);
+    background-attachment: fixed;
     min-height: 100vh;
   }
 
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.02em;
+  }
+
   ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { @apply bg-surface; }
-  ::-webkit-scrollbar-thumb { @apply bg-surface-border rounded-full; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-slate-800 rounded-full hover:bg-slate-700 transition-colors; }
 }
 
 @layer components {
   /* ── Glass Cards ───────────────────────────────────── */
   .card {
-    @apply rounded-2xl border border-white/[0.06];
-    background: rgba(22, 27, 39, 0.7);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    @apply rounded-2xl border border-white/10 shadow-2xl transition-all duration-300;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  }
+  
+  .card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
   }
 
   .card-solid {
-    @apply bg-surface-card border border-surface-border rounded-2xl;
+    @apply bg-slate-900 border border-slate-800 rounded-2xl shadow-lg;
   }
 
   /* ── Buttons ────────────────────────────────────────── */
   .btn-primary {
-    @apply bg-brand-500 hover:bg-brand-400 text-white font-semibold px-6 py-3 rounded-xl
-           transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed
-           shadow-lg shadow-brand-500/20;
+    @apply bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 
+           text-white font-medium px-6 py-3 rounded-xl transition-all duration-300 active:scale-95 
+           disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-500/25 
+           hover:shadow-indigo-500/40;
+    font-family: 'Outfit', sans-serif;
   }
 
   .btn-ghost {
-    @apply text-slate-400 hover:text-slate-100 hover:bg-white/5 px-4 py-2 rounded-lg
-           transition-all duration-200;
+    @apply text-slate-400 hover:text-slate-100 hover:bg-white/10 px-4 py-2 rounded-xl
+           transition-all duration-200 backdrop-blur-md;
+    font-family: 'Outfit', sans-serif;
   }
 
   /* ── Inputs ─────────────────────────────────────────── */
@@ -71,22 +91,22 @@
 
   /* ── Neon glow helpers ──────────────────────────────── */
   .glow-brand {
-    box-shadow: 0 0 24px rgba(61,87,252,0.45), 0 0 48px rgba(61,87,252,0.15);
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.4), 0 0 60px rgba(168, 85, 247, 0.2);
   }
   .glow-brand-sm {
-    box-shadow: 0 0 12px rgba(61,87,252,0.3);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
   }
 }
 
 @layer utilities {
   .text-gradient {
-    background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .text-gradient-brand {
-    background: linear-gradient(135deg, #6180ff 0%, #a78bfa 100%);
+    background: linear-gradient(135deg, #818cf8 0%, #e879f9 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -110,8 +130,14 @@
 
 /* Ring visualizer pulses */
 @keyframes ring-idle {
-  0%, 100% { transform: scale(1);    opacity: 0.35; }
-  50%       { transform: scale(1.07); opacity: 0.5;  }
+  0%, 100% { transform: scale(1);    opacity: 0.2; }
+  50%       { transform: scale(1.1); opacity: 0.4; }
 }
+.ring-idle { animation: ring-idle 3s ease-in-out infinite; }
 
-.ring-idle { animation: ring-idle 2.4s ease-in-out infinite; }
+@keyframes ring-active {
+  0% { transform: scale(0.9); opacity: 0.8; box-shadow: 0 0 10px rgba(99,102,241,0.5); }
+  50% { transform: scale(1.5); opacity: 0.3; box-shadow: 0 0 30px rgba(168,85,247,0.4); }
+  100% { transform: scale(2.2); opacity: 0; box-shadow: 0 0 50px rgba(99,102,241,0); }
+}
+.ring-active { animation: ring-active 1.5s cubic-bezier(0.16, 1, 0.3, 1) infinite; }

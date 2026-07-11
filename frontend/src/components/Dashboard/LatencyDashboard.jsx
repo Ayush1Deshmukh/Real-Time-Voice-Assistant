@@ -4,8 +4,8 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts'
 import { useAuth } from '../../context/AuthContext'
-import { supabase } from '../../lib/supabase'
-
+import { db } from '../../lib/firebase'
+import { collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore'
 export default function LatencyDashboard() {
   const { user } = useAuth()
   const [data, setData] = useState([])
@@ -14,14 +14,26 @@ export default function LatencyDashboard() {
   useEffect(() => {
     if (!user) return
     const fetchMetrics = async () => {
-      const { data: metrics } = await supabase
-        .from('session_metrics')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(20)
-
-      if (metrics) setData(metrics.reverse()) // oldest to newest for chart
+      try {
+        const q = query(
+          collection(db, 'session_metrics'),
+          where('user_id', '==', user.uid),
+          orderBy('timestamp', 'desc'),
+          limit(20)
+        );
+        const querySnapshot = await getDocs(q);
+        const metrics = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            ...data,
+            id: doc.id,
+            created_at: data.timestamp ? data.timestamp.toMillis() : Date.now()
+          };
+        });
+        setData(metrics.reverse()) // oldest to newest for chart
+      } catch (error) {
+        console.error("Error fetching metrics:", error);
+      }
       setLoading(false)
     }
 

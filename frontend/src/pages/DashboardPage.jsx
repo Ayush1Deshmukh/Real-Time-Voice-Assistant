@@ -53,8 +53,8 @@ function HowItWorks({ activeStage }) {
       sub: 'Llama 3.3 70B',
       target: '< 800ms',
       activeOn: ['llm'],
-      activeColor: 'rgba(139,92,246,0.5)',
-      borderColor: '#8b5cf6',
+      activeColor: 'rgba(168,85,247,0.5)',
+      borderColor: '#a855f7',
     },
     {
       key: 'tts',
@@ -148,7 +148,7 @@ export default function DashboardPage() {
   const {
     sendAudio, status, transcript, response, audioUrl, isConnected,
     asrMs, llmMs, ttsMs, totalMs, canType, error, ttsDegraded,
-  } = useWebSocket(user?.id)
+  } = useWebSocket(user?.uid)
 
   const isProcessing  = status === 'processing' || status === 'asr' || status === 'llm'
   const showTranscript = transcript || isProcessing
@@ -170,7 +170,7 @@ export default function DashboardPage() {
       >
         {/* Header */}
         <motion.div variants={itemVariants} className="text-center">
-          <h1 className="text-3xl font-bold text-gradient mb-1">Voice Assistant</h1>
+          <h1 className="text-4xl font-extrabold text-gradient mb-2 tracking-tight">Voice Assistant</h1>
           <p className="text-slate-500 text-sm">Sub-1.5s AI pipeline · Whisper + Groq + gTTS</p>
         </motion.div>
 

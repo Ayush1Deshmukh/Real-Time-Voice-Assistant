@@ -160,13 +160,13 @@ export default function MicrophoneButton({ onAudioReady, disabled = false, proce
                 width:  baseSize,
                 height: baseSize,
                 borderRadius: '50%',
-                border: `1.5px solid ${recording ? 'rgba(239,68,68,0.5)' : 'rgba(61,87,252,0.45)'}`,
+                border: `1.5px solid ${recording ? 'rgba(232, 121, 249, 0.4)' : 'rgba(99, 102, 241, 0.3)'}`,
                 background: recording
-                  ? `rgba(239,68,68,${0.025 - ring * 0.004})`
-                  : `rgba(61,87,252,${0.04 - ring * 0.008})`,
+                  ? `rgba(232, 121, 249, ${0.03 - ring * 0.005})`
+                  : `rgba(99, 102, 241, ${0.04 - ring * 0.008})`,
                 boxShadow: recording
-                  ? `0 0 ${8 + vol * 20}px rgba(239,68,68,${0.2 + vol * 0.3})`
-                  : `0 0 12px rgba(61,87,252,0.15)`,
+                  ? `0 0 ${10 + vol * 30}px rgba(168, 85, 247, ${0.2 + vol * 0.4})`
+                  : `0 0 15px rgba(99, 102, 241, 0.2)`,
               }}
             />
           )
@@ -178,16 +178,11 @@ export default function MicrophoneButton({ onAudioReady, disabled = false, proce
           onClick={handleClick}
           disabled={isDisabled}
           aria-label={recording ? 'Stop recording' : 'Start recording'}
-          whileHover={!isDisabled && !processing ? { scale: 1.07 } : {}}
-          whileTap={!isDisabled && !processing ? { scale: 0.93 } : {}}
-          animate={recording
-            ? { scale: 1 }
-            : { scale: [1, 1.03, 1] }
-          }
-          transition={recording
-            ? { duration: 0.1 }
-            : { duration: 2.8, ease: 'easeInOut', repeat: Infinity }
-          }
+          whileHover={!isDisabled && !processing ? { scale: 1.05 } : {}}
+          whileTap={!isDisabled && !processing ? { scale: 0.95 } : {}}
+          animate={recording ? { scale: 1 } : { scale: [1, 1.02, 1] }}
+          transition={recording ? { duration: 0.1 } : { duration: 3, ease: 'easeInOut', repeat: Infinity }}
+          className={recording ? 'ring-active' : ''}
           style={{
             position: 'relative',
             zIndex: 10,
@@ -199,18 +194,19 @@ export default function MicrophoneButton({ onAudioReady, disabled = false, proce
             justifyContent: 'center',
             cursor: isDisabled ? 'not-allowed' : 'pointer',
             background: processing
-              ? 'rgba(30,37,54,0.9)'
+              ? 'rgba(15, 23, 42, 0.9)'
               : recording
-              ? 'linear-gradient(135deg, #dc2626, #ef4444)'
-              : 'linear-gradient(135deg, #2c3ef1, #3d57fc)',
+              ? 'linear-gradient(135deg, #a855f7, #e879f9)'
+              : 'linear-gradient(135deg, #4f46e5, #6366f1)',
             boxShadow: processing || isDisabled
               ? 'none'
               : recording
-              ? `0 0 ${20 + vol * 30}px rgba(239,68,68,${0.5 + vol * 0.4}), 0 8px 24px rgba(0,0,0,0.4)`
-              : '0 0 24px rgba(61,87,252,0.55), 0 8px 24px rgba(0,0,0,0.4)',
-            border: '1px solid rgba(255,255,255,0.12)',
+              ? `0 0 ${20 + vol * 40}px rgba(168, 85, 247, ${0.6 + vol * 0.4}), inset 0 0 10px rgba(255,255,255,0.2)`
+              : '0 0 30px rgba(99, 102, 241, 0.4), inset 0 0 10px rgba(255,255,255,0.2)',
+            border: '1px solid rgba(255,255,255,0.2)',
             outline: 'none',
-            opacity: isDisabled ? 0.5 : 1
+            opacity: isDisabled ? 0.4 : 1,
+            backdropFilter: 'blur(8px)'
           }}
         >
           <AnimatePresence mode="wait">
@@ -257,13 +253,13 @@ export default function MicrophoneButton({ onAudioReady, disabled = false, proce
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.2 }}
-          className="text-sm font-medium text-center"
-          style={{ color: !isConnected ? '#fbbf24' : processing ? '#94a3b8' : recording ? '#f87171' : '#64748b' }}
+          className="text-sm font-medium text-center tracking-wide"
+          style={{ color: !isConnected ? '#fbbf24' : processing ? '#94a3b8' : recording ? '#e879f9' : '#a5b4fc' }}
         >
           {!isConnected ? '🔌 Connecting to backend…'
             : processing ? '⚡ Processing your voice…'
-            : recording ? '● Recording — click to stop'
-            : 'Click to speak'}
+            : recording ? '● Listening — click to stop'
+            : 'Tap to speak'}
         </motion.p>
       </AnimatePresence>
 
